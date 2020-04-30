@@ -36,8 +36,7 @@ namespace CetBookStore.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(400)")
-                        .HasMaxLength(400);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("PageCount")
                         .HasColumnType("int");
@@ -53,14 +52,37 @@ namespace CetBookStore.Data.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(25)")
-                        .HasMaxLength(25);
+                        .HasColumnType("nvarchar(512)")
+                        .HasMaxLength(512);
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("CetBookStore.Models.BookImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDefaultImage")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("BookImages");
                 });
 
             modelBuilder.Entity("CetBookStore.Models.Category", b =>
@@ -94,8 +116,7 @@ namespace CetBookStore.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Detail")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Rating")
                         .HasColumnType("int");
@@ -315,6 +336,15 @@ namespace CetBookStore.Data.Migrations
                     b.HasOne("CetBookStore.Models.Category", "Category")
                         .WithMany("Books")
                         .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CetBookStore.Models.BookImage", b =>
+                {
+                    b.HasOne("CetBookStore.Models.Book", "Book")
+                        .WithMany("BookImages")
+                        .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
